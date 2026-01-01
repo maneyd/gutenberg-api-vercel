@@ -7,17 +7,21 @@ load_dotenv()
 
 def get_db_connection():
     """Connect to PostgreSQL database"""
-    # Try DATABASE_URL first (common in Vercel Postgres, Neon, etc.)
+    # Try DATABASE_URL first (Render, Heroku, etc. use this format)
     db_url = os.getenv('DATABASE_URL')
     
     if db_url:
-        # Parse the URL and connect with SSL if needed
+        # Render databases typically require SSL
+        # Try with SSL first, fallback without if needed
         try:
-            # For services like Neon, Supabase that require SSL
             return psycopg2.connect(db_url, sslmode="require")
-        except:
-            # Fallback without SSL requirement
-            return psycopg2.connect(db_url)
+        except Exception as e:
+            # Fallback: try without SSL requirement
+            try:
+                return psycopg2.connect(db_url)
+            except:
+                # If both fail, raise the original error
+                raise e
     else:
         # Fallback to individual environment variables
         return psycopg2.connect(

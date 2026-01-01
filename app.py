@@ -3,28 +3,15 @@ import os
 import sys
 import traceback
 
-# Configure Flask app for serverless
-# Use absolute paths to ensure templates and static files are found
-base_dir = os.path.dirname(os.path.abspath(__file__))
+# Configure Flask app for Render
+# Use relative paths (Render handles this better)
 app = Flask(__name__, 
-            static_folder=os.path.join(base_dir, 'static'),
-            template_folder=os.path.join(base_dir, 'templates'))
+            static_folder='static',
+            template_folder='templates')
 
-# Temporarily disable CORS to test if it's causing the issubclass error
-# We can add CORS headers manually if needed
-# try:
-#     from flask_cors import CORS
-#     CORS(app)
-# except:
-#     pass
-
-# Add CORS headers manually as a workaround
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return response
+# Apply CORS for cross-origin requests
+from flask_cors import CORS
+CORS(app)
 
 # Set Flask to handle errors properly
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
@@ -77,7 +64,7 @@ def health():
             'db_user_set': bool(os.getenv('DB_USER')),
             'db_password_set': bool(os.getenv('DB_PASSWORD')),
             'database_status': db_status,
-            'environment': os.getenv('VERCEL_ENV', 'unknown'),
+            'environment': os.getenv('RENDER', 'development'),
             'python_version': sys.version.split()[0] if 'sys' in globals() else 'unknown'
         }), 200
     except Exception as e:
@@ -101,7 +88,7 @@ def index():
 @app.route('/api/books', methods=['GET'])
 def get_books():
     try:
-        # Log for debugging (will appear in Vercel logs)
+        # Log for debugging (will appear in Render logs)
         print("API /api/books called")
         print(f"DATABASE_URL exists: {bool(os.getenv('DATABASE_URL'))}")
         print(f"DB_HOST exists: {bool(os.getenv('DB_HOST'))}")
