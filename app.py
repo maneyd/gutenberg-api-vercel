@@ -36,7 +36,7 @@ def test():
     return jsonify({
         'status': 'ok',
         'message': 'Flask app is working!',
-        'environment': os.getenv('VERCEL_ENV', 'unknown')
+        'environment': os.getenv('RENDER', 'development')
     }), 200
 
 @app.route('/health')
@@ -55,9 +55,32 @@ def health():
         else:
             db_status = f'import_failed: {_db_import_error}'
             
+        # Check DATABASE_URL format
+        db_url = os.getenv('DATABASE_URL', '')
+        db_url_info = {}
+        if db_url:
+            try:
+                from urllib.parse import urlparse
+                parsed = urlparse(db_url)
+                hostname = parsed.hostname or ''
+                db_url_info = {
+                    'has_url': True,
+                    'hostname': hostname,
+                    'hostname_complete': '.' in hostname if hostname else False,
+                    'has_scheme': bool(parsed.scheme),
+                    'has_credentials': bool(parsed.username),
+                    'has_port': bool(parsed.port),
+                    'has_database': bool(parsed.path and parsed.path != '/')
+                }
+            except:
+                db_url_info = {'has_url': True, 'parse_error': True}
+        else:
+            db_url_info = {'has_url': False}
+        
         return jsonify({
             'status': 'ok',
             'database_url_set': bool(os.getenv('DATABASE_URL')),
+            'database_url_info': db_url_info,
             'db_host_set': bool(os.getenv('DB_HOST')),
             'db_port_set': bool(os.getenv('DB_PORT')),
             'db_name_set': bool(os.getenv('DB_NAME')),
