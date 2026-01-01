@@ -1,16 +1,12 @@
-import psycopg2
 import os
+import psycopg2
+from urllib.parse import urlparse
 from dotenv import load_dotenv
-
 load_dotenv()
 
-
 def get_db_connection():
-    """Connect to PostgreSQL database"""
-    return psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            port=os.getenv('DB_PORT', '5432'),
-            database=os.getenv('DB_NAME', 'gutendex'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', '')
-        )
+    db_url = os.environ["DATABASE_URL"]  # must exist in Vercel env vars
+
+    # Neon requires SSL
+    return psycopg2.connect(db_url, sslmode="require")
+
