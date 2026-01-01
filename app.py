@@ -1,17 +1,30 @@
 from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
 import os
 import sys
 import traceback
 
 # Configure Flask app for serverless
 # Use absolute paths to ensure templates and static files are found
-# regardless of where the script is executed from
 base_dir = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, 
             static_folder=os.path.join(base_dir, 'static'),
             template_folder=os.path.join(base_dir, 'templates'))
-CORS(app)
+
+# Temporarily disable CORS to test if it's causing the issubclass error
+# We can add CORS headers manually if needed
+# try:
+#     from flask_cors import CORS
+#     CORS(app)
+# except:
+#     pass
+
+# Add CORS headers manually as a workaround
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
 # Set Flask to handle errors properly
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
