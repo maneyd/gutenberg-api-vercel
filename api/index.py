@@ -12,7 +12,9 @@ from app import app  # your Flask app
 #    # Wrap the Flask app for Vercel serverless
 #   return handle_request(app, environ, start_response)
 
-def handler(environ, start_response):
-    return app(environ, start_response)
+#def handler(environ, start_response):
+#    return app(environ, start_response)
+
+handler = app
 
 #handler = handle_request(app)
