@@ -50,7 +50,22 @@ PGPASSWORD=your_password psql -h your_host -U your_user -d your_database -f gute
 
 ## Step 3: Configure Environment Variables
 
-You'll need to set the following environment variables in Vercel:
+You have two options for database connection:
+
+### Option 1: DATABASE_URL (Recommended - Easier)
+Set a single `DATABASE_URL` environment variable with your full connection string:
+```
+DATABASE_URL=postgresql://user:password@host:port/database
+```
+
+This is the format provided by:
+- Vercel Postgres
+- Neon
+- Supabase
+- Most modern PostgreSQL services
+
+### Option 2: Individual Variables
+Alternatively, you can set individual variables:
 
 1. **DB_HOST** - Your PostgreSQL host
 2. **DB_PORT** - Your PostgreSQL port (usually 5432)
@@ -72,6 +87,10 @@ You'll need to set the following environment variables in Vercel:
 
 #### Via Vercel CLI:
 ```bash
+# Option 1: Single DATABASE_URL (recommended)
+vercel env add DATABASE_URL
+
+# Option 2: Individual variables
 vercel env add DB_HOST
 vercel env add DB_PORT
 vercel env add DB_NAME
@@ -129,10 +148,16 @@ Test your endpoints:
 
 ### Common Issues:
 
-1. **Database Connection Errors:**
-   - Verify all environment variables are set correctly
+1. **Serverless Function Crashed:**
+   - **Check Vercel logs**: Go to your deployment → Functions → Logs to see the actual error
+   - **Missing DATABASE_URL or DB variables**: Ensure you've set either `DATABASE_URL` or all `DB_*` variables
+   - **Import errors**: Check that all dependencies are in `requirements.txt`
+   - **Database connection**: Verify your database allows connections from Vercel's IP addresses
+
+2. **Database Connection Errors:**
+   - Verify all environment variables are set correctly (either `DATABASE_URL` or all `DB_*` variables)
    - Check that your database allows connections from Vercel's IP addresses
-   - Ensure SSL is enabled if required by your database provider
+   - Ensure SSL is enabled if required by your database provider (most cloud databases require SSL)
 
 2. **Module Not Found Errors:**
    - Ensure all dependencies are in `requirements.txt`
