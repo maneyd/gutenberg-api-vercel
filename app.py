@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import os
 import sys
-import traceback
 
 # Configure Flask app for Render
 # Use relative paths (Render handles this better)
@@ -24,7 +23,6 @@ except Exception as e:
     # If database import fails, create a dummy function
     _db_import_success = False
     _db_import_error = str(e)
-    print(f"WARNING: Database import failed: {str(e)}")
     
     def get_db_connection():
         raise Exception(f"Database module import failed: {_db_import_error}")
@@ -41,12 +39,11 @@ def test():
 
 @app.route('/health')
 def health():
-    """Health check endpoint for debugging"""
+    """Health check endpoint"""
     try:
         db_status = 'unknown'
         if _db_import_success:
             try:
-                # Try to connect to database
                 conn = get_db_connection()
                 conn.close()
                 db_status = 'connected'
@@ -55,66 +52,25 @@ def health():
         else:
             db_status = f'import_failed: {_db_import_error}'
             
-        # Check DATABASE_URL format
-        db_url = os.getenv('DATABASE_URL', '')
-        db_url_info = {}
-        if db_url:
-            try:
-                from urllib.parse import urlparse
-                parsed = urlparse(db_url)
-                hostname = parsed.hostname or ''
-                db_url_info = {
-                    'has_url': True,
-                    'hostname': hostname,
-                    'hostname_complete': '.' in hostname if hostname else False,
-                    'has_scheme': bool(parsed.scheme),
-                    'has_credentials': bool(parsed.username),
-                    'has_port': bool(parsed.port),
-                    'has_database': bool(parsed.path and parsed.path != '/')
-                }
-            except:
-                db_url_info = {'has_url': True, 'parse_error': True}
-        else:
-            db_url_info = {'has_url': False}
-        
         return jsonify({
             'status': 'ok',
-            'database_url_set': bool(os.getenv('DATABASE_URL')),
-            'database_url_info': db_url_info,
-            'db_host_set': bool(os.getenv('DB_HOST')),
-            'db_port_set': bool(os.getenv('DB_PORT')),
-            'db_name_set': bool(os.getenv('DB_NAME')),
-            'db_user_set': bool(os.getenv('DB_USER')),
-            'db_password_set': bool(os.getenv('DB_PASSWORD')),
             'database_status': db_status,
-            'environment': os.getenv('RENDER', 'development'),
-            'python_version': sys.version.split()[0] if 'sys' in globals() else 'unknown'
+            'environment': os.getenv('RENDER', 'development')
         }), 200
     except Exception as e:
         return jsonify({
             'status': 'error',
-            'error': str(e),
-            'traceback': traceback.format_exc()
+            'error': str(e)
         }), 500
 
 @app.route('/')
 def index():
-    try:
-        return render_template('index.html')
-    except Exception as e:
-        error_trace = traceback.format_exc()
-        print(f"Error rendering index: {str(e)}")
-        print(f"Traceback: {error_trace}")
-        return f"Error loading page: {str(e)}", 500
+    return render_template('index.html')
 
 
 @app.route('/api/books', methods=['GET'])
 def get_books():
     try:
-        # Log for debugging (will appear in Render logs)
-        print("API /api/books called")
-        print(f"DATABASE_URL exists: {bool(os.getenv('DATABASE_URL'))}")
-        print(f"DB_HOST exists: {bool(os.getenv('DB_HOST'))}")
         book_id_param = request.args.get('book_id', '').strip()
         page = request.args.get('page', default=1, type=int)
         author = request.args.get('author', '').strip()
@@ -339,13 +295,8 @@ def get_books():
         return jsonify({'count': total_count, 'results': books}), 200
         
     except Exception as e:
-        # Log full error trace for debugging
-        error_trace = traceback.format_exc()
-        print(f"Error in /api/books: {str(e)}")
-        print(f"Traceback: {error_trace}")
         return jsonify({
-            'error': str(e),
-            'trace': error_trace if app.debug else None
+            'error': str(e)
         }), 500
 
 if __name__ == '__main__':
