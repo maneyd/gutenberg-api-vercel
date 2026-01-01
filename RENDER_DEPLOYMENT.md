@@ -49,8 +49,9 @@ This guide will walk you through deploying your Flask application to Render.
 2. **Configure Your Service:**
    - **Name**: Choose a name (e.g., "gutenberg-books-api")
    - **Environment**: Python 3
+   - **Python Version**: Set to **3.12.0** (important: psycopg2-binary doesn't support Python 3.13 yet)
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:app`
+   - **Start Command**: `python -m gunicorn app:app`
    - **Plan**: Choose Free or Starter plan
 
 3. **Set Environment Variables:**
@@ -140,15 +141,18 @@ vercel/
    - Ensure you're using the correct connection string format
    - For Render databases, use the "Internal Database URL" if service is in same region
 
-2. **Build Failures:**
+2. **Build Failures / Python Version Issues:**
+   - **Python 3.13 Error**: If you see `undefined symbol: _PyInterpreterState_Get`, use Python 3.12.0
+   - Set Python version to 3.12.0 in Render settings or use `runtime.txt` file
    - Check that all dependencies are in `requirements.txt`
-   - Verify Python version compatibility
+   - Verify Python version compatibility (psycopg2-binary requires Python ≤ 3.12)
    - Check build logs in Render dashboard
 
-3. **Application Crashes:**
+3. **Application Crashes / "gunicorn: command not found":**
+   - Use `python -m gunicorn app:app` as the start command instead of just `gunicorn app:app`
+   - Ensure `gunicorn` is in `requirements.txt`
    - Check logs in Render dashboard → "Logs" tab
    - Verify all environment variables are set
-   - Ensure `gunicorn` is in `requirements.txt`
 
 4. **Static Files Not Loading:**
    - Verify `static/` directory structure
