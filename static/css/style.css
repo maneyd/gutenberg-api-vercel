@@ -1,0 +1,118 @@
+/* Very simple and boring styles */
+
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: white;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.filters {
+    border: 1px solid black;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-row {
+    margin-bottom: 15px;
+}
+
+.filter-group {
+    margin-bottom: 10px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.filter-group input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid black;
+}
+
+.button-group {
+    margin-top: 15px;
+}
+
+button {
+    padding: 8px 15px;
+    margin-right: 10px;
+    border: 1px solid black;
+    background-color: white;
+    cursor: pointer;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.results-info {
+    margin: 20px 0;
+}
+
+.books-container {
+    margin-top: 20px;
+}
+
+.book-card {
+    border: 1px solid black;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.book-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.book-serial {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.book-id {
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+
+.book-detail {
+    margin: 5px 0;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.page-info {
+    margin: 0 15px;
+}
+
+.loading {
+    padding: 20px;
+    text-align: center;
+}
+
+.error {
+    padding: 15px;
+    border: 1px solid red;
+    background-color: #ffcccc;
+    margin: 20px 0;
+}
+
+.no-results {
+    padding: 40px;
+    text-align: center;
+}
