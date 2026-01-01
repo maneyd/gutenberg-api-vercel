@@ -2,6 +2,7 @@ services:
   - type: web
     name: gutenberg-books-api
     env: python
+    runtime: python-3.12.0
     buildCommand: pip install -r requirements.txt
     startCommand: python -m gunicorn app:app
     envVars:
