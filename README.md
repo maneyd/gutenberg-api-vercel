@@ -71,11 +71,13 @@ A Flask REST API for querying Project Gutenberg books from a PostgreSQL database
 
 ## Deployment to Render
 
+See [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md) for detailed instructions on deploying to Render.
+
 Quick steps:
 1. Push your code to GitHub/GitLab/Bitbucket
 2. Create a PostgreSQL database on Render
 3. Create a new Web Service on Render
-4. Set `DATABASE_URL` environment variable in Render dashboard
+4. Set `DATABASE_URL` environment variable
 5. Deploy!
 
 ## API Endpoints
