@@ -1,20 +1,10 @@
-import os
 import sys
-from flask import Flask, jsonify
-import psycopg2
+import os
+from app import app  # Import your Flask app
 
-# Add project root so we can import app if it's in another file
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from app import app  # your Flask app
-#from vercel_wsgi import handle_request
+# Add project root if needed
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-#def handler(environ, start_response):
-#    # Wrap the Flask app for Vercel serverless
-#   return handle_request(app, environ, start_response)
-
-#def handler(environ, start_response):
-#    return app(environ, start_response)
-
-handler = app
-
-#handler = handle_request(app)
+# Vercel expects a WSGI callable
+def handler(environ, start_response):
+    return app(environ, start_response)
