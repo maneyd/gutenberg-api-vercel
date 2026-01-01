@@ -5,9 +5,12 @@ import sys
 import traceback
 
 # Configure Flask app for serverless
+# Use absolute paths to ensure templates and static files are found
+# regardless of where the script is executed from
+base_dir = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, 
-            static_folder='static',
-            template_folder='templates')
+            static_folder=os.path.join(base_dir, 'static'),
+            template_folder=os.path.join(base_dir, 'templates'))
 CORS(app)
 
 # Set Flask to handle errors properly
